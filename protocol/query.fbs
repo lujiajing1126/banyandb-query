@@ -67,7 +67,7 @@ table TraceBrief {
     total: int32;
 }
 
-table TraceQueryCriteria {
+table TraceQueryCriteria {  
     trace_id: string;
     start_time: uint64;
     end_time: uint64;
@@ -78,7 +78,6 @@ table TraceQueryCriteria {
     service_id: string;
     service_instance_id: string;
     limit: uint32;
-    from: uint32 = 0;
     query_order: QueryOrder = ByStartTime;
     sort: Sort = DESC;
     trace_state: TraceState = ALL;
