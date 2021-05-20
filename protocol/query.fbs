@@ -1,0 +1,99 @@
+namespace pkg.query;
+
+enum BinaryOp: byte {
+    EQ,
+    NE,
+    LT,
+    GT,
+    LE,
+    GE,
+    HAVING,
+    NOT_HAVING
+}
+
+table Tag {
+    key: [ubyte];
+    value: [ubyte];
+}
+
+table TagQuery {
+    tag: Tag;
+    op: BinaryOp;
+}
+
+enum TraceState : byte {
+    ALL,
+    SUCCESS,
+    ERROR
+}
+
+enum QueryOrder : byte {
+    ByStartTime,
+    ByDuration
+}
+
+enum Sort : byte {
+    DESC,
+    ASC
+}
+
+table SegmentRecord {
+    segment_id: string;
+    trace_id: string;
+    statement: string;
+    service_id: string;
+    service_instance_id: string;
+    endpoint_name: string;
+    endpoint_id: string;
+    start_time: uint64;
+    end_time: uint64;
+    duration: uint64;
+    trace_state: TraceState;
+    data_binary: [ubyte];
+    tags: [Tag];
+}
+
+table BasicTrace {
+    segment_id: string;
+    endpoint_names: [string];
+    duration: uint64;
+    start_time: uint64;
+    trace_state: TraceState;
+    trace_ids: [string];
+}
+
+table TraceBrief {
+    traces: [BasicTrace];
+    total: int32;
+}
+
+table TraceQueryCriteria {
+    trace_id: string;
+    start_time: uint64;
+    end_time: uint64;
+    min_duration: uint64;
+    max_duration: uint64;
+    endpoint_name: string;
+    endpoint_id: string;
+    service_id: string;
+    service_instance_id: string;
+    limit: uint32;
+    from: uint32 = 0;
+    query_order: QueryOrder = ByStartTime;
+    sort: Sort = DESC;
+    trace_state: TraceState = ALL;
+    tags: [TagQuery];
+}
+
+table Trace {
+    segments: [SegmentRecord];
+}
+
+table GetTraceRequest {
+    trace_id: string;
+}
+
+rpc_service Query {
+    GetTrace(GetTraceRequest):Trace;
+    QueryTraces(TraceQueryCriteria):TraceBrief;
+}
